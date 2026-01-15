@@ -1,28 +1,29 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { serverUrl } from '../App'
 import { setAllReview } from '../redux/reviewSlice'
 import axios from 'axios'
 
-const getAllReviews = () => {
+const useAllReviews = () => {
+  const dispatch = useDispatch()
 
-   const dispatch = useDispatch()
-  
-
-  useEffect(()=>{
-    const getAllReviews = async () => {
+  useEffect(() => {
+    const fetchAllReviews = async () => {
       try {
-        const result = await axios.get(serverUrl + "/api/review/allReview" , {withCredentials:true})
-        console.log(result.data)
-        dispatch(setAllReview(result.data))
-        
+        const result = await axios.get(
+          `${serverUrl}/api/review/allReview`,
+          { withCredentials: true }
+        )
+        console.log("All reviews:", result.data)
+        dispatch(setAllReview(result.data.data || result.data))
       } catch (error) {
-        console.log(error)
+        console.log("Error:", error.response?.data)
+        dispatch(setAllReview([]))
       }
     }
-    getAllReviews()
-  },[])
-  
+    
+    fetchAllReviews()
+  }, [dispatch])
 }
 
-export default getAllReviews
+export default useAllReviews
